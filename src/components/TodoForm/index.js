@@ -3,8 +3,13 @@ import DatePicker from "react-datepicker";
 import { v4 as uuidv4 } from "uuid";
 
 import "react-datepicker/dist/react-datepicker.css";
+import { useTodos } from "../../hooks/useTodos";
 
-export const TodoForm = ({ setTodos }) => {
+export const TodoForm = () => {
+  // pull setTodos from global context
+  const { setTodos } = useTodos();
+
+  // local state context
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [dueDate, setDueDate] = useState(Date.now());
@@ -26,20 +31,26 @@ export const TodoForm = ({ setTodos }) => {
         },
       ];
 
-      setTodos(newTodos);
-      setError();
-
       localStorage.setItem("todoItems", JSON.stringify(newTodos));
+
+      // remove any errors, reset field values
+      setError();
+      setTitle("");
+      setContent("");
+      setDueDate(Date.now());
+      setTodos(newTodos);
     } else {
       setError("Please complete form");
     }
   };
 
+  // return presentational elements
   return (
     <section className="container">
       <form onSubmit={onSubmit}>
         <div className="mb-3">
           <input
+            value={title}
             type="text"
             className="form-control"
             id="title"
@@ -51,6 +62,7 @@ export const TodoForm = ({ setTodos }) => {
         </div>
         <div className="mb-3">
           <textarea
+            value={content}
             className="form-control"
             placeholder="Add some details"
             id="content"
@@ -64,6 +76,7 @@ export const TodoForm = ({ setTodos }) => {
             Due Date
           </label>
           <DatePicker
+            value={dueDate}
             id="dueDate"
             selected={dueDate}
             onChange={(date) => {

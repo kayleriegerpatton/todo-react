@@ -1,34 +1,18 @@
-import { useState } from "react";
-
 import { Header } from "./components/Header";
 import { TodoForm } from "./components/TodoForm";
 import { Todos } from "./components/Todos";
+import { AppProvider } from "./context/AppContext";
 
 export const App = () => {
-  const [todos, setTodos] = useState(
-    JSON.parse(localStorage.getItem("todoItems")) || []
-  );
-
-  const onDelete = (event) => {
-    const todosFromLS = JSON.parse(localStorage.getItem("todoItems")) || [];
-
-    const newTodos = todosFromLS.filter((todo) => {
-      return todo.id !== event.currentTarget.id;
-    });
-
-    setTodos(newTodos);
-
-    localStorage.setItem("todoItems", JSON.stringify(newTodos));
-  };
-
+  // presentational elements
   return (
-    <div>
-      <Header title="My ToDo Items" todoCount={todos.length} />
-      <TodoForm setTodos={setTodos} />
-      <Todos
-        todos={JSON.parse(localStorage.getItem("todoItems")) || []}
-        onDelete={onDelete}
-      />
-    </div>
+    <AppProvider>
+      <div>
+        {/* children passed into the AppProvider in AppContext.js */}
+        <Header title="My ToDo Items" />
+        <TodoForm />
+        <Todos />
+      </div>
+    </AppProvider>
   );
 };
